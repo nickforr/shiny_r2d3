@@ -3,6 +3,7 @@
 // r2d3: https://rstudio.github.io/r2d3
 //
 
+
 var margin = {top: 20, right: 100, bottom: 50, left: 50},
     width = width - margin.left - margin.right,
     height = height - margin.top - margin.bottom;
@@ -11,6 +12,8 @@ var svg = r2d3.svg
   .append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
+
+var g = svg
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
           
@@ -20,7 +23,7 @@ var x = d3.scaleLinear()
     .range([0, width]);
 
 // Draw the axis
-svg
+g
   .append("g")
   .attr("class", "x axis")
   .attr("transform", "translate(" + 0 + "," + height + ")")      // This controls the vertical position of the Axis
