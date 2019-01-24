@@ -6,7 +6,7 @@
 var pts = r2d3.svg.selectAll('circle')
     .data(r2d3.data);
 
-var margin = {top: 10, right: 20, bottom: 30, left: 60},
+var margin = {top: 40, right: 40, bottom: 40, left: 80},
     width = width - margin.left - margin.right,
     height = height - margin.top - margin.bottom;
 
@@ -28,7 +28,7 @@ var x_axis = d3.axisBottom()
 
 // y axis			
 var y = d3.scaleLinear()
-    .domain(d3.extent(data, d => d.y)).nice()
+    .domain(d3.extent(data, d => d.y))//.nice()
     .range([height, 0]);
 
 var y_axis = d3.axisLeft()
@@ -46,7 +46,7 @@ pts.enter()
     .append('circle')
       .attr("cx", function (d) { return x(d.x); })
       .attr("cy", function (d) { return y(d.y); })
-      .attr("r", 1.5)
+      .attr("r", 2.0)
       .style("fill", "#69b3a2");
       
 pts.exit().remove();

@@ -4,13 +4,17 @@ library(tibble)
 library(r2d3)
 
 ui <- fluidPage(
-  inputPanel(
-    sliderInput("x_mean", label = "x mean:",
-                min = 0, max = 10, value = 1, step = 1),
-    sliderInput("y_mean", label = "y mean:",
-                min = 0, max = 10, value = 1, step = 1)
+  column(width = 12,
+    inputPanel(
+      sliderInput("x_mean", label = "x mean:",
+                  min = 0, max = 10, value = 1, step = 1),
+      sliderInput("y_mean", label = "y mean:",
+                  min = 0, max = 10, value = 1, step = 1)
+    )
   ),
-  d3Output("d3")
+  column(width = 12,
+    d3Output("d3")  
+  )
 )
 
 server <- function(input, output) {
