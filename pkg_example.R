@@ -21,17 +21,16 @@ server <- function(input, output) {
   
   randomData <- reactive({
     tibble::tibble(
-      x = c(0, rnorm(1000, input$x_mean, 5)), 
-      y = c(0, rnorm(1000, input$y_mean, 5))
+      x = c(0, rnorm(100, input$x_mean, 5)), 
+      y = c(0, rnorm(100, input$y_mean, 5))
     )
   })
   
   output$d3 <- renderD3({
     r2d3(
       randomData(),
-      #script = "test.js",
-      script = "scatter.js", 
-      dependencies = "d3-jetpack"
+      #script = "test2.js",
+      script = "scatter.js"
     )
   })
 }
