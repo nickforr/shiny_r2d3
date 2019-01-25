@@ -12,19 +12,15 @@ r2d3.onRender(function(data, svg, width, height, options) {
   width = width - margin.left - margin.right;
   height = height - margin.top - margin.bottom;
   
-  var p = svg.selectAll("g").data([null]);
-  if (p.empty()) 
+  var duration= 800; 
+  
+  var g = svg.selectAll("g").data([null]);
+  if (g.empty()) 
     svg = svg
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
-  var pts = svg.selectAll('circle')
-      .data(r2d3.data);
-  var xx = svg.selectAll('x axis')
-      .data(r2d3.data);
-  
-  var duration = 800; 
-  
+
+
   // x axis
   var x = d3.scaleLinear()
       .domain(d3.extent(data, d => d.x)).nice()
@@ -32,7 +28,24 @@ r2d3.onRender(function(data, svg, width, height, options) {
   
   var x_axis = d3.axisBottom()
   			.scale(x);
+  			
+  var xx = svg.selectAll('.x_axis')
+      .data(["null"]);
   
+  xx.enter()
+    .append("g")
+    .attr("class", "x_axis")
+    .attr("transform", "translate(0,"+ height + ")")
+    .call(x_axis);
+    
+  xx.exit().remove();
+  
+  xx.transition()
+    .duration(duration)
+    //.attr("transform", "translate(0,"+ y(0) + ")")
+    .call(x_axis);
+    
+    
   // y axis			
   var y = d3.scaleLinear()
       .domain(d3.extent(data, d => d.y)).nice()
@@ -41,21 +54,27 @@ r2d3.onRender(function(data, svg, width, height, options) {
   var y_axis = d3.axisLeft()
   			.scale(y);
   
-  xx.enter()
-    .append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0,"+ height + ")")
-      .call(x_axis);
-  xx.exit().remove();
+  var yy = svg.selectAll('.y_axis')
+      .data(["null"]);
   
-  var yy = svg.selectAll("y axis").data([null]);
-  if (yy.empty())
-    svg
-      .append("g")
-      .attr("class", "y axis")
-      .attr("transform", "translate(0,0)")
-        .call(y_axis);
-     
+  yy.enter()
+    .append("g")
+    .attr("class", "y_axis")
+    .attr("transform", "translate(0,0)")
+    .call(y_axis);
+    
+  yy.exit().remove();
+  
+  yy.transition()
+    .duration(duration)
+    //.attr("transform", "translate(" + x(0) + ",0)")
+    .call(y_axis);
+
+
+  // points
+  var pts = svg.selectAll('circle')
+      .data(r2d3.data);
+  
   pts.enter()
       .append('circle')
         .attr("cx", function (d) { return x(d.x); })
@@ -69,17 +88,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .duration(duration)
     .attr("cx", function (d) { return x(d.x); })
     .attr("cy", function (d) { return y(d.y); });
-    
-  xx.transition()
-    .duration(duration)
-    //.attr("transform", "translate(0,"+ y(0) + ")")
-    .call(x_axis);
-      
-  svg
-    .select('.y.axis')
-      .transition()
-      .duration(duration)
-      //.attr("transform", "translate(" + x(0) + ",0)")
-      .call(y_axis);
-
+  
+  
+  
 });
