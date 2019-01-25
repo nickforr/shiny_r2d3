@@ -21,32 +21,15 @@ r2d3.onRender(function(data, svg, width, height, options) {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-  // x axis
+  // x axis fns
   var x = d3.scaleLinear()
       .domain(d3.extent(data, d => d.x)).nice()
       .range([0, width]);
   
   var x_axis = d3.axisBottom()
   			.scale(x);
-  			
-  var xx = svg.selectAll('.x_axis')
-      .data(["null"]);
   
-  xx.enter()
-    .append("g")
-    .attr("class", "x_axis")
-    .attr("transform", "translate(0,"+ height + ")")
-    .call(x_axis);
-    
-  xx.exit().remove();
-  
-  xx.transition()
-    .duration(duration)
-    //.attr("transform", "translate(0,"+ y(0) + ")")
-    .call(x_axis);
-    
-    
-  // y axis			
+  // y axis	fns
   var y = d3.scaleLinear()
       .domain(d3.extent(data, d => d.y)).nice()
       .range([height, 0]);
@@ -54,20 +37,42 @@ r2d3.onRender(function(data, svg, width, height, options) {
   var y_axis = d3.axisLeft()
   			.scale(y);
   
+  
+  // setup and transition x axis
+  var xx = svg.selectAll('.x_axis')
+      .data(["null"]);
+  
+  xx.enter()
+    .append("g")
+    .attr("class", "x_axis")
+    .attr("transform", "translate(0," + y(0) + ")")
+    //.attr("transform", "translate(0,"+ height + ")")
+    .call(x_axis);
+    
+  xx.exit().remove();
+  
+  xx.transition()
+    .duration(duration)
+    .attr("transform", "translate(0,"+ y(0) + ")")
+    .call(x_axis);
+    
+    
+  // setup and transition y axis
   var yy = svg.selectAll('.y_axis')
       .data(["null"]);
   
   yy.enter()
     .append("g")
     .attr("class", "y_axis")
-    .attr("transform", "translate(0,0)")
+    .attr("transform", "translate(" + x(0) + ",0)")
+    //.attr("transform", "translate(0,0)")
     .call(y_axis);
     
   yy.exit().remove();
   
   yy.transition()
     .duration(duration)
-    //.attr("transform", "translate(" + x(0) + ",0)")
+    .attr("transform", "translate(" + x(0) + ",0)")
     .call(y_axis);
 
 
