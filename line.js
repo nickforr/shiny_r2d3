@@ -1,62 +1,13 @@
-// !preview r2d3 data=data.frame(x = c(0, 1, -20, 5), y = c(0, 1, -20, 5))
+// !preview r2d3 data=create_dummy_line_data(500, 0.05)
 //
 // r2d3: https://rstudio.github.io/r2d3
 //
 
-var data = [
-  {
-    name: "USA",
-    values: [
-      {date: "2000", price: "100"},
-      {date: "2001", price: "110"},
-      {date: "2002", price: "145"},
-      {date: "2003", price: "241"},
-      {date: "2004", price: "101"},
-      {date: "2005", price: "90"},
-      {date: "2006", price: "10"},
-      {date: "2007", price: "35"},
-      {date: "2008", price: "21"},
-      {date: "2009", price: "201"}
-    ]
-  },
-  {
-    name: "Canada",
-    values: [
-      {date: "2000", price: "200"},
-      {date: "2001", price: "120"},
-      {date: "2002", price: "33"},
-      {date: "2003", price: "21"},
-      {date: "2004", price: "51"},
-      {date: "2005", price: "190"},
-      {date: "2006", price: "120"},
-      {date: "2007", price: "85"},
-      {date: "2008", price: "221"},
-      {date: "2009", price: "101"}
-    ]
-  },
-  {
-    name: "Maxico",
-    values: [
-      {date: "2000", price: "50"},
-      {date: "2001", price: "10"},
-      {date: "2002", price: "5"},
-      {date: "2003", price: "71"},
-      {date: "2004", price: "20"},
-      {date: "2005", price: "9"},
-      {date: "2006", price: "220"},
-      {date: "2007", price: "235"},
-      {date: "2008", price: "61"},
-      {date: "2009", price: "10"}
-    ]
-  }
-];
-
-data.forEach(function(d) { 
-  d.values.forEach(function(d) {
-    d.date = +d.date;
-    d.price = +d.price;    
-  });
-});
+var data = d3.nest()
+  .key(function(d){
+    return d.ref;
+  })
+  .entries(data);
 
 
 var duration= 800; 
@@ -75,7 +26,7 @@ if (g.empty()) {
 
 // x axis fns
 var x = d3.scaleLinear()
-        .domain(d3.extent(data[0].values, d => d.date)).nice()
+        .domain(d3.extent(data[0].values, d => d.xval)).nice()
         .range([0, iwidth]);
 
 var x_axis = d3.axisBottom()
@@ -83,7 +34,7 @@ var x_axis = d3.axisBottom()
 
 // y axis	fns
 var y = d3.scaleLinear()
-        .domain(d3.extent(data[0].values, d => d.price)).nice()
+        .domain([0, 1.2]).nice()
         //.domain([0, 120]).nice()
         .range([iheight, 0]);
 
@@ -127,8 +78,8 @@ yy.transition()
 
 // lines
 var line = d3.line()
-            .x(d => x(d.date))
-            .y(d => y(d.price));
+            .x(d => x(d.xval))
+            .y(d => y(d.yval));
 let lines = svg.append('g')
   .attr('class', 'lines');
 
