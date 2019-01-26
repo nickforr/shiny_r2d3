@@ -1,74 +1,122 @@
 
 library(shiny)
+library(shinythemes)
+library(simplyr)
 library(tibble)
 library(r2d3)
 
+set.seed(1.357)
+nproj <- 15
+nsim <- 5000
+sampleSims <- sample.int(nsim, floor(0.1 * nsim))
+highRiskRtns <- 
+  simplyr::createRandomReturns(
+    mu = 0.05, sigma = 0.15, nsim = 5000, nproj = nproj)
+lbpRtns <- 
+  simplyr::createRandomReturns(
+    mu = 0.02, sigma = 0.03, nsim = 5000, nproj = nproj)
+
+
 ui <- 
   fluidPage(
-  tabsetPanel(
-    tabPanel(
-      "Scatter", 
-      fluidPage(
-        column(
-          width = 12,
-          inputPanel(
-            sliderInput("x_mean", label = "x mean:",
-                        min = 0, max = 50, value = 1, step = 1),
-            sliderInput("y_mean", label = "y mean:",
-                        min = 0, max = 50, value = 1, step = 1)
-          )
-        ),
-        column(
-          width = 12,
-          d3Output("d3_scatter")  
-        )
-      )
-    ), 
-    tabPanel(
-      "Bar", 
-      fluidPage(
-        column(
-          width = 12,
-          inputPanel(
-            sliderInput(
-              "bar_max", label = "bar max",
-              min = 0, max = 100, value = 90, step = 5)
-          )
-        ),
-        column(
-          width = 12,
-          d3Output("d3_bar")  
+    theme = shinytheme("flatly"),
+    title = "D3 test",
+    sidebarLayout(
+      sidebarPanel(
+        numericInput(
+          inputId = "liabValue", label = "Liab. value (m)", value = 200, 
+          min = 0, max = 10000),
+        sliderInput(
+          inputId = "fl", label = "initial f.l.", min = 50, max = 100, 
+          value = 70, step = 1), 
+        sliderInput(
+          inputId = "ppnRisky", label = "Ppn. risky", min = 0, max = 100, 
+          value = 50, step = 5), 
+        sliderInput(
+          inputId = "flTarget", label = "Target f.l.", min = 80, max = 120, 
+          value = 100, step = 5),
+        selectInput(
+          inputId = "flYear", "Scatter f.l. year", 
+          choices = seq_len(nproj), selected = nproj), 
+        selectInput(
+          inputId = "riskYear", "Scatter f.l. year", 
+          choices = seq_len(nproj), selected = nproj)
+        ), 
+      mainPanel(
+        fluidRow(
+          column(width = 6, d3Output("d3_bar")), 
+          column(width = 6, d3Output("d3_lines"))
+        ), 
+        fluidRow(
+          column(width = 6, d3Output("d3_scatter"))
         )
       )
     )
   )
-)
 
 server <- function(input, output) {
   
-  scatterData <- reactive({
-    tibble::tibble(
-      x = c(0, rnorm(100, input$x_mean, 5)), 
-      y = c(0, rnorm(100, input$y_mean, 5))
-    )
+  assetRtns <- reactive({
+    (input$ppnRisky / 100) * highRiskRtns + 
+      (1 - input$ppnRisky / 100) * lbpRiskRtns
   })
-  barData <- reactive({
-    tibble::tibble(
-      x = seq_len(10) - 1, 
-      y = runif(10, max = input$bar_max / 100)
-    )
+  assetValues <- reactive({
+    input$fl * input$liabValue * simplyr::convertReturnToIndex(assetRtns())
+  })
+  
+  liabValues <- reactive({
+    input$liabValue * simplyr::convertReturnToIndex(lbpRiskRtns)
+  })
+  
+  flProjections <- reactive({
+    assetValues() / liabValues()
+  })
+  deficitProjections <- reactive({
+    assetValues() - liabValues()
+  })
+  
+  probSuccess <- reactive({
+    simplyr::calcStatProbSuccess(flProjections(), probTarget = flTarget)
   })
   
   output$d3_scatter <- renderD3({
+    flPoints <- flProjections()[input$flYear + 1, ]
+    deficitPoints <- deficitProjections()[input$riskYear + 1, ]
+      
+    scatterData <- 
+      tibble::tibble(
+        x = deficitPoints, 
+        y = flPoints
+      )
     r2d3(
-      scatterData(),
+      scatterData,
       script = "scatter.js"
     )
   })
   output$d3_bar <- renderD3({
+    barData <- 
+      tibble::tibble(
+        x = probSuccess()$timestep, 
+        y = probSuccess()$probSuccess
+      )
     r2d3(
-      barData(),
+      barData,
       script = "prob_bar.js"
+    )
+  })
+  output$d3_lines <- renderD3({
+    lineData <- 
+      tibble::tibble(
+        ref = 
+          paste0(
+            "ref_", unlist(lapply(seq_len(nsim), rep.int, times = nproj + 1))), 
+        x = rep.int(seq_len(nproj + 1) - 1, nsim),
+        y = as.vector(flProjections())
+      )
+      flProjections()
+    r2d3(
+      lineData,
+      script = "line.js"
     )
   })
 }
