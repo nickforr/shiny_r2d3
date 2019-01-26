@@ -34,7 +34,7 @@ var x_axis = d3.axisBottom()
 
 // y axis	fns
 var y = d3.scaleLinear()
-        .domain([0, 1.2]).nice()
+        .domain([0, 120]).nice()
         //.domain([0, 120]).nice()
         .range([iheight, 0]);
 

@@ -43,12 +43,23 @@ ui <-
           choices = seq_len(nproj), selected = nproj)
         ), 
       mainPanel(
-        fluidRow(
-          column(width = 6, d3Output("d3_bar")), 
-          column(width = 6, d3Output("d3_lines"))
-        ), 
-        fluidRow(
-          column(width = 6, d3Output("d3_scatter"))
+        tabsetPanel(
+          tabPanel(
+            "Scatter", 
+            fluidPage(
+              d3Output("d3_scatter")
+            )
+          ), 
+          tabPanel(
+            "Prob. bar", 
+            fluidPage(d3Output("d3_bar"))
+          ), 
+          tabPanel(
+            "FL Lines", 
+            fluidPage(
+              d3Output("d3_lines")
+            )
+          )
         )
       )
     )
@@ -58,14 +69,14 @@ server <- function(input, output) {
   
   assetRtns <- reactive({
     (input$ppnRisky / 100) * highRiskRtns + 
-      (1 - input$ppnRisky / 100) * lbpRiskRtns
+      (1 - input$ppnRisky / 100) * lbpRtns
   })
   assetValues <- reactive({
     input$fl * input$liabValue * simplyr::convertReturnToIndex(assetRtns())
   })
   
   liabValues <- reactive({
-    input$liabValue * simplyr::convertReturnToIndex(lbpRiskRtns)
+    input$liabValue * simplyr::convertReturnToIndex(lbpRtns)
   })
   
   flProjections <- reactive({
@@ -76,12 +87,12 @@ server <- function(input, output) {
   })
   
   probSuccess <- reactive({
-    simplyr::calcStatProbSuccess(flProjections(), probTarget = flTarget)
+    simplyr::calcStatProbSuccess(flProjections(), probTarget = input$flTarget)
   })
   
   output$d3_scatter <- renderD3({
-    flPoints <- flProjections()[input$flYear + 1, ]
-    deficitPoints <- deficitProjections()[input$riskYear + 1, ]
+    flPoints <- flProjections()[as.numeric(input$flYear) + 1, ]
+    deficitPoints <- deficitProjections()[as.numeric(input$riskYear) + 1, ]
       
     scatterData <- 
       tibble::tibble(
