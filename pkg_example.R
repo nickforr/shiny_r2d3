@@ -48,8 +48,8 @@ server <- function(input, output) {
   
   scatterData <- reactive({
     tibble::tibble(
-      x = c(0, rnorm(100, input$x_mean, 5)), 
-      y = c(0, rnorm(100, input$y_mean, 5))
+      x = c(0, rnorm(1000, input$x_mean, 5)), 
+      y = c(0, rnorm(1000, input$y_mean, 5))
     )
   })
   barData <- reactive({

@@ -9,7 +9,7 @@ create_dummy_line_data <- function(n, sigma) {
   y <- purrr::flatten_dbl(purrr::map(seq_len(n), ~0.7 * cumprod(1 + rnorm(tt, 0.02, sigma))))
   tibble::tibble(
     ref = ref, 
-    x = x, 
-    y = y
+    xval = x, 
+    yval = y
   )
 }
