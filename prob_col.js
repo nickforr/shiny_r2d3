@@ -14,7 +14,13 @@ function col_height() {return (svg_height() / actual_max()) * layer_height; }
 function col_top()  {return svg_height() * layer_top; }
 function col_left() {return svg_width()  * layer_left;}
 
-var cols = svg.selectAll('rect').data(data);
+// add columns
+var cols_gcheck = svg.selectAll("g.cols").data(data);
+if (cols_gcheck.empty()) {
+  var cols_gcheck = svg.append('g')
+      .attr("class", "cols");
+}
+var cols = cols_gcheck.selectAll('rect').data(data);
 
 cols.enter().append('rect')
   .attr('height', function(d) {return (d.y * col_height()); })
@@ -56,8 +62,12 @@ cols.transition()
   .attr('stroke', 'white');
 
 // Identity labels
-
-var txt = svg.selectAll('text').data(data);
+var labels_gcheck = svg.selectAll("g.labels").data(data);
+if (labels_gcheck.empty()) {
+  var labels_gcheck = svg.append('g')
+      .attr("class", "labels");
+}
+var txt = labels_gcheck.selectAll('text').data(data);
 
 txt.enter().append('text')
     .attr('x', function(d, i) {return (i * col_width()) + (svg_width()* layer_left) + (col_width() * 0.5); })
@@ -80,8 +90,13 @@ txt.transition()
     .attr('text-anchor', 'middle');
 
 // Numeric labels
+var total_gcheck = svg.selectAll("g.totals").data(data);
 
-var totals = svg.selectAll('totals').data(data);
+if (total_gcheck.empty()) {
+  var total_gcheck = svg.append('g')
+      .attr("class", "totals");
+}
+var totals = total_gcheck.selectAll('text').data(data);
 
 totals.enter().append('text')
       .attr('x', function(d, i) {return (i * col_width()) + (svg_width()* layer_left) + (col_width() * 0.5); })
@@ -90,7 +105,7 @@ totals.enter().append('text')
       .style('font-size', '10px') 
       .style('font-family', 'sans-serif')
       .text(function(d) {return d.ylabel; });  
-      
+
 totals.exit().remove();
 
 totals.transition()
@@ -99,14 +114,6 @@ totals.transition()
       .attr('y', function(d) {return col_top() + ((actual_max() - d.y) * col_height()); })
       .text(function(d) {return d.ylabel; });
 
-// Title
-svg.append('text')
-  .attr('x', svg_width()* 0.01)             
-  .attr('y', svg_height()* 0.05)
-  .style('font-size', '16px') 
-  .style('font-family', 'sans-serif')
-  .text('Probability of success');
- 
 // y axis...
 var y = d3.scaleLinear()
     .domain([0,100]).nice()
@@ -115,7 +122,23 @@ var y = d3.scaleLinear()
 var y_axis = d3.axisLeft()
 			        .scale(y);
 
-var yaxis = svg.append('g')
-      .attr("class", "y axis")
+var yaxis_check = svg.selectAll(".y_axis").data(data);
+if (yaxis_check.empty()) {
+  var yaxis = svg.append('g')
+      .attr("class", "y_axis")
       .attr("transform", function(d) {return "translate(" +  svg_width() * layer_left * 0.9 + "," + col_top() + ")"; })
       .call(y_axis);
+}
+
+// Title
+if (svg.selectAll(".titletext").data("null").empty()) {
+  svg.append('text')
+  .attr('class', 'titletext')
+  .attr('x', svg_width()* 0.01)             
+  .attr('y', svg_height()* 0.05)
+  .style('font-size', '16px') 
+  .style('font-family', 'sans-serif')
+  .text('Probability of success');
+}
+
+ 
