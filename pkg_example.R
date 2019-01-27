@@ -55,6 +55,10 @@ ui <-
             fluidPage(d3Output("d3_bar"))
           ), 
           tabPanel(
+            "Prob. col", 
+            fluidPage(d3Output("d3_col"))
+          ), 
+          tabPanel(
             "FL Lines", 
             fluidPage(
               d3Output("d3_lines")
@@ -113,6 +117,19 @@ server <- function(input, output) {
     r2d3(
       barData,
       script = "prob_bar.js"
+    )
+  })
+  output$d3_col <- renderD3({
+    barData <- 
+      tibble::tibble(
+        x = probSuccess()$timestep, 
+        y = probSuccess()$probSuccess * 100, 
+        label = probSuccess()$timestep,
+        ylabel = sprintf("%.f%%", probSuccess()$probSuccess * 100)
+      )
+    r2d3(
+      barData,
+      script = "prob_col.js"
     )
   })
   output$d3_lines <- renderD3({
