@@ -71,7 +71,7 @@ yy.transition()
   			
 // points
 var pts = svg.selectAll('circle')
-          .data(r2d3.data);  			
+          .data(data);  			
 
 pts.enter()
   .append("g")
