@@ -2,7 +2,7 @@
 //
 // r2d3: https://rstudio.github.io/r2d3
 //
-
+//console.log(JSON.stringify(data));
 var duration= 1000; 
 
 var margin = {top: 50, right: 50, bottom: 50, left: 50};

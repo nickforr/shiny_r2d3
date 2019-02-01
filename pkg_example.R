@@ -15,7 +15,7 @@ highRiskRtns <-
 lbpRtns <- 
   simplyr::createRandomReturns(
     mu = 0.02, sigma = 0.03, nsim = 5000, nproj = nproj)
-
+source("createFunnelData.R")
 
 ui <- 
   fluidPage(
@@ -133,20 +133,9 @@ server <- function(input, output) {
     )
   })
   output$d3_lines <- renderD3({
-    sampleData <- flProjections()[, sampleSims, drop = FALSE]
-    lineData <- 
-      tibble::tibble(
-        ref = 
-          paste0(
-            "ref_", 
-            unlist(lapply(seq_len(ncol(sampleData)), rep.int, times = nproj + 1))), 
-        xval = rep.int(seq_len(nproj + 1) - 1, ncol(sampleData)),
-        yval = as.vector(sampleData)
-      )
-      flProjections()
     r2d3(
-      lineData,
-      script = "line.js"
+      translateFunnelData(flProjections()),
+      script = "funnelPlot.js"
     )
   })
 }
