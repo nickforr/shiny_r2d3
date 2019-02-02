@@ -52,7 +52,7 @@ svg.append('text')
   .style('font-size', '10px') 
   .style('font-family', 'sans-serif')
   .text('10% of individual simulations shown');
-  
+    
 // set up g elements for each part
 // summary lines and circles
 var summary_gcheck = svg.selectAll(".summary").data("null");
@@ -142,7 +142,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .duration(500)
     .attr('d', d => summaryline(d.values));
 	
-  // summary circles
+	// summary circles
   var summarycircles = summary_gcheck.selectAll('circle').data(summarydata_circles);
   
   summarycircles.enter().append('circle')
@@ -158,10 +158,8 @@ r2d3.onRender(function(data, svg, width, height, options) {
         .on("mouseleave", function(){
             d3.select(this)
               .style('fill', '#6CBCD8FF');
-        })
-        .append("svg:title") // TITLE APPENDED HERE
-          .text(function(d) { return d.qtileValue; });      
-  
+        });
+        
   summarycircles.exit().remove();
   
   summarycircles.transition()
