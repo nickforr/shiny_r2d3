@@ -63,6 +63,12 @@ ui <-
             fluidPage(
               d3Output("d3_lines")
             )
+          ),
+          tabPanel(
+            "FL Lines 2", 
+            fluidPage(
+              d3Output("d3_lines2")
+            )
           )
         )
       )
@@ -136,6 +142,12 @@ server <- function(input, output) {
     r2d3(
       translateFunnelData(flProjections()),
       script = "funnelPlot.js"
+    )
+  })
+  output$d3_lines2 <- renderD3({
+    r2d3(
+      translateFunnelData(flProjections()),
+      script = "simpleFunnelPlot.js"
     )
   })
 }
