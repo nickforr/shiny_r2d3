@@ -167,6 +167,36 @@ r2d3.onRender(function(data, svg, width, height, options) {
     .attr("cx", function (d) { return x(d.timestep); })
     .attr("cy", function (d) { return y(d.qtileValue); });
   
+  // summary text (on mouseover)
+  var summarytext = summary_gcheck.selectAll('text').data(summarydata_circles);
+  
+  summarytext.enter().append('text')
+        .attr("transform", function(d) {return "translate(" + panel_left() + "," + panel_top() + ")"; })
+        .attr("x", function (d) { return x(d.timestep); })
+        .attr("y", function (d) { return y(d.qtileValue); })
+        .text(function(d) {return d.qtileValue; })
+        .attr('text-anchor', 'middle')
+        .style('font-size', '10px') 
+        .attr("fill", "blue")
+        .style('font-family', 'sans-serif')
+        .style('opacity', "0")
+        .on("mouseenter", function(){
+            d3.select(this)
+              .style('opacity', "1");
+        })
+        .on("mouseleave", function(){
+            d3.select(this)
+              .style('opacity', "0");
+        });
+        
+  summarytext.exit().remove();
+  
+  summarytext.transition()
+    .duration(500)
+    .attr("cx", function (d) { return x(d.timestep); })
+    .attr("cy", function (d) { return y(d.qtileValue); })
+    .text(function(d) {return d.qtileValue; });
+  
   // sample lines
   var samplelines = sample_gcheck.selectAll('path').data(sampledata);
 
