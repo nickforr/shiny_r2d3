@@ -174,10 +174,10 @@ r2d3.onRender(function(data, svg, width, height, options) {
         .attr("transform", function(d) {return "translate(" + panel_left() + "," + panel_top() + ")"; })
         .attr("x", function (d) { return x(d.timestep); })
         .attr("y", function (d) { return y(d.qtileValue); })
-        .text(function(d) {return d.qtileValue; })
+        .text(function(d) {return parseFloat(d.qtileValue).toFixed(0)+"%"; })
         .attr('text-anchor', 'middle')
-        .style('font-size', '10px') 
-        .attr("fill", "blue")
+        .style('font-size', '11px') 
+        .attr("fill", "#3FA6CCFF")
         .style('font-family', 'sans-serif')
         .style('opacity', "0")
         .on("mouseenter", function(){
@@ -193,9 +193,9 @@ r2d3.onRender(function(data, svg, width, height, options) {
   
   summarytext.transition()
     .duration(500)
-    .attr("cx", function (d) { return x(d.timestep); })
-    .attr("cy", function (d) { return y(d.qtileValue); })
-    .text(function(d) {return d.qtileValue; });
+    .attr("x", function (d) { return x(d.timestep); })
+    .attr("y", function (d) { return y(d.qtileValue); })
+    .text(function(d) {return parseFloat(d.qtileValue).toFixed(0)+"%"; });
   
   // sample lines
   var samplelines = sample_gcheck.selectAll('path').data(sampledata);
