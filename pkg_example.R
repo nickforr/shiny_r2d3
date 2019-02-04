@@ -34,35 +34,22 @@ ui <-
           value = 50, step = 5), 
         sliderInput(
           inputId = "flTarget", label = "Target f.l.", min = 80, max = 120, 
-          value = 100, step = 5),
-        selectInput(
-          inputId = "flYear", "Scatter f.l. year", 
-          choices = seq_len(nproj), selected = nproj), 
-        selectInput(
-          inputId = "riskYear", "Scatter f.l. year", 
-          choices = seq_len(nproj), selected = nproj)
+          value = 100, step = 5)#,
+        # sliderInput(
+        #   inputId = "flmax", "Max fl on funnel", min = 100, max = 200, 
+        #   value = 120, step = 5)
         ), 
       mainPanel(
         tabsetPanel(
-          tabPanel(
-            "Scatter", 
-            fluidPage(
-              d3Output("d3_scatter")
-            )
-          ), 
-          tabPanel(
-            "Prob. bar", 
-            fluidPage(d3Output("d3_bar"))
-          ), 
-          tabPanel(
-            "Prob. col", 
-            fluidPage(d3Output("d3_col"))
-          ), 
           tabPanel(
             "FL Lines", 
             fluidPage(
               d3Output("d3_lines")
             )
+          ), 
+          tabPanel(
+            "Prob. success", 
+            fluidPage(d3Output("d3_col"))
           )
         )
       )
@@ -93,30 +80,11 @@ server <- function(input, output) {
   probSuccess <- reactive({
     simplyr::calcStatProbSuccess(flProjections(), probTarget = input$flTarget)
   })
-  
-  output$d3_scatter <- renderD3({
-    flPoints <- flProjections()[as.numeric(input$flYear) + 1, ]
-    deficitPoints <- deficitProjections()[as.numeric(input$riskYear) + 1, ]
-      
-    scatterData <- 
-      tibble::tibble(
-        x = deficitPoints, 
-        y = flPoints
-      )
+  output$d3_lines <- renderD3({
     r2d3(
-      scatterData,
-      script = "scatter.js"
-    )
-  })
-  output$d3_bar <- renderD3({
-    barData <- 
-      tibble::tibble(
-        x = probSuccess()$timestep, 
-        y = probSuccess()$probSuccess
-      )
-    r2d3(
-      barData,
-      script = "prob_bar.js"
+      translateFunnelData(flProjections()),
+      script = "funnelPlot.js", 
+      options = list(fl_max = 120)
     )
   })
   output$d3_col <- renderD3({
@@ -131,14 +99,6 @@ server <- function(input, output) {
     r2d3(
       barData,
       script = "prob_col_comparison.js"
-      #script = "prob_col.js"
-    )
-  })
-  output$d3_lines <- renderD3({
-    r2d3(
-      translateFunnelData(flProjections()),
-      script = "funnelPlot.js"#, 
-      #options = list(fl_max = 130)
     )
   })
 }
