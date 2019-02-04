@@ -18,14 +18,6 @@ var sampledata = d3.nest()
   })
   .entries(data.flSample);
 
-// Check for option passed in
-if (options === null || options.fl_max === null) {
-  var fl_max = 130;
-} else {
-  var fl_max = options.fl_max;
-}
- 
-
 var layer_left   = 0.1;
     layer_top    = 0.1;
     layer_height = 0.8;
@@ -93,6 +85,14 @@ r2d3.onRender(function(data, svg, width, height, options) {
     })
     .entries(data.flSample);
   
+  // Check for option passed in
+  var fl_max;
+  if (options === null || options.fl_max === null) {
+    fl_max = 130;
+  } else {
+    fl_max = options.fl_max;
+  }
+ 
   //setup x axis
   var x = d3.scaleLinear()
             .domain(d3.extent(summarydata[0].values, d => d.timestep)).nice()
@@ -198,7 +198,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
         })
         .on("mouseleave", function(){
             d3.select(this)
-              .transition().delay(1000)
+              .transition().delay(750)
               .style('opacity', "0");
         });
         
