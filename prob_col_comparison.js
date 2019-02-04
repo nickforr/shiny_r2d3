@@ -1,4 +1,4 @@
-// !preview r2d3 data=data.frame(y = c(70,80,60,20), x = c(1,2,4,5), label = c('jan', 'feb', 'mar', 'apr'), ylabel = sprintf("%.f%%", c(70,80,60,20)))
+// !preview r2d3 data=data.frame(yorig = c(40, 70, 20, 90), y = c(70,80,60,20), x = c(1,2,4,5), label = c('jan', 'feb', 'mar', 'apr'), ylabel = sprintf("%.f%%", c(70,80,60,20)))
 
 var layer_left   = 0.1;
     layer_top    = 0.1;
@@ -58,6 +58,21 @@ cols.transition()
   .attr('x', function(d, i) {return (i * col_width()) + (svg_width()* layer_left); })
   .attr('y', function(d) {return col_top() + ((actual_max() - d.y) * col_height()); });
 
+// Add circles 
+var circles = cols_gcheck.selectAll('circle').data(data);
+
+cols.enter().append('circle')
+  //.attr('height', function(d) {return (d.y * col_height()); })
+  //.attr('width', col_width())
+  .attr("cx", function(d, i) {return ((i + 0.5) * col_width()) + (svg_width() * layer_left); })
+  .attr("cy", function(d) {return col_top() + ((actual_max() - d.yorig) * col_height()); })
+  .attr("r", 8.0)
+  .attr('opacity', 0.5)
+  .style("fill", "none")
+  .style("stroke-width", 3)
+  .style("stroke-dasharray", ("7, 3")) // make the stroke dashed
+  .attr('stroke', 'grey');
+
 // Identity labels
 var labels_gcheck = svg.selectAll("g.labels").data(data);
 if (labels_gcheck.empty()) {
@@ -69,10 +84,11 @@ var txt = labels_gcheck.selectAll('text').data(data);
 txt.enter().append('text')
     .attr('x', function(d, i) {return (i * col_width()) + (svg_width()* layer_left) + (col_width() * 0.5); })
     .attr('y', function(d) {return svg_height()* 0.95;})
-    .style('font-size', '10px') 
     .text(function(d) {return d.label;})
-    .style('font-family', 'sans-serif')
-    .attr('text-anchor', 'middle');
+    .attr('text-anchor', 'middle')
+    .style('font-size', '12px') 
+    .style('font-family', 'sans-serif');
+    
       
       
 txt.exit().remove();
@@ -81,10 +97,7 @@ txt.transition()
   .duration(500)
     .attr('x', function(d, i) {return (i * col_width()) + (svg_width()* layer_left) + (col_width() * 0.5); })
     .attr('y', function(d) {return svg_height()* 0.95;})
-    .style('font-size', '10px') 
-    .text(function(d) {return d.label;})
-    .style('font-family', 'sans-serif')
-    .attr('text-anchor', 'middle');
+    .text(function(d) {return d.label;});
 
 // Numeric labels
 var total_gcheck = svg.selectAll("g.totals").data(data);
@@ -99,7 +112,7 @@ totals.enter().append('text')
       .attr('x', function(d, i) {return (i * col_width()) + (svg_width()* layer_left) + (col_width() * 0.5); })
       .attr('y', function(d) {return (col_top() * 0.9) + ((actual_max() - d.y) * col_height()); })
       .attr('text-anchor', 'middle')
-      .style('font-size', '10px') 
+      .style('font-size', '12px') 
       .style('font-family', 'sans-serif')
       .text(function(d) {return d.ylabel; });  
 
@@ -124,6 +137,7 @@ if (yaxis_check.empty()) {
   var yaxis = svg.append('g')
       .attr("class", "y_axis")
       .attr("transform", function(d) {return "translate(" +  svg_width() * layer_left * 0.9 + "," + col_top() + ")"; })
+      .style('font-size', '12px') 
       .call(y_axis);
 }
 
@@ -138,4 +152,3 @@ if (svg.selectAll(".titletext").data("null").empty()) {
   .text('Probability of success');
 }
 
- 

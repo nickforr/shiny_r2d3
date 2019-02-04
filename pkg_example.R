@@ -124,12 +124,14 @@ server <- function(input, output) {
       tibble::tibble(
         x = probSuccess()$timestep, 
         y = probSuccess()$probSuccess * 100, 
+        yorig = (seq_len(nproj + 1) - 1) * 100 / (nproj),
         label = probSuccess()$timestep,
         ylabel = sprintf("%.f%%", probSuccess()$probSuccess * 100)
       )
     r2d3(
       barData,
-      script = "prob_col.js"
+      script = "prob_col_comparison.js"
+      #script = "prob_col.js"
     )
   })
   output$d3_lines <- renderD3({

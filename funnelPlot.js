@@ -97,6 +97,8 @@ r2d3.onRender(function(data, svg, width, height, options) {
     var xaxis = svg.append('g')
         .attr("class", "x_axis")
         .attr("transform", "translate(" + panel_left() + ", " + (panel_top() + panel_height()) + ")")
+        .style('font-family', 'sans-serif')
+        .style('font-size', '12px') 
         .call(x_axis);
   }
 
@@ -111,6 +113,8 @@ r2d3.onRender(function(data, svg, width, height, options) {
     var yaxis = svg.append('g')
         .attr("class", "y_axis")
         .attr("transform", "translate(" + panel_left() + ", " + panel_top() + ")")
+        .style('font-family', 'sans-serif')
+        .style('font-size', '12px') 
         .call(y_axis);
   }
   
@@ -176,7 +180,8 @@ r2d3.onRender(function(data, svg, width, height, options) {
         .attr("y", function (d) { return y(d.qtileValue); })
         .text(function(d) {return parseFloat(d.qtileValue).toFixed(0)+"%"; })
         .attr('text-anchor', 'middle')
-        .style('font-size', '11px') 
+        .attr("dy", "-.5em")
+        .style('font-size', '12px') 
         .attr("fill", "#3FA6CCFF")
         .style('font-family', 'sans-serif')
         .style('opacity', "0")
