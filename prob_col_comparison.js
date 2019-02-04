@@ -69,8 +69,6 @@ if (show_initial) {
   var circles = cols_gcheck.selectAll('circle').data(data);
   
   cols.enter().append('circle')
-    //.attr('height', function(d) {return (d.y * col_height()); })
-    //.attr('width', col_width())
     .attr("cx", function(d, i) {return ((i + 0.5) * col_width()) + (svg_width() * layer_left); })
     .attr("cy", function(d) {return col_top() + ((actual_max() - d.yorig) * col_height()); })
     .attr("r", 8.0)
@@ -146,6 +144,7 @@ if (yaxis_check.empty()) {
       .attr("class", "y_axis")
       .attr("transform", function(d) {return "translate(" +  svg_width() * layer_left * 0.9 + "," + col_top() + ")"; })
       .style('font-size', '12px') 
+      .style('font-family', 'sans-serif')
       .call(y_axis);
 }
 
@@ -155,7 +154,7 @@ if (svg.selectAll(".titletext").data("null").empty()) {
   .attr('class', 'titletext')
   .attr('x', svg_width()* 0.01)             
   .attr('y', svg_height()* 0.05)
-  .style('font-size', '16px') 
+  .style('font-size', '14px') 
   .style('font-family', 'sans-serif')
   .text('Probability of success');
 }
