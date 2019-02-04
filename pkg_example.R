@@ -137,7 +137,8 @@ server <- function(input, output) {
   output$d3_lines <- renderD3({
     r2d3(
       translateFunnelData(flProjections()),
-      script = "funnelPlot.js"
+      script = "funnelPlot.js"#, 
+      #options = list(fl_max = 130)
     )
   })
 }

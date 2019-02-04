@@ -1,4 +1,4 @@
-// !preview r2d3 data=data.frame(yorig = c(40, 70, 20, 90), y = c(70,80,60,20), x = c(1,2,4,5), label = c('jan', 'feb', 'mar', 'apr'), ylabel = sprintf("%.f%%", c(70,80,60,20)))
+// !preview r2d3 data=data.frame(yorig = c(40, 70, 20, 90), y = c(70,80,60,20), x = c(1,2,4,5), label = c('jan', 'feb', 'mar', 'apr'), ylabel = sprintf("%.f%%", c(70,80,60,20))), options = list(show_initial = TRUE)
 
 var layer_left   = 0.1;
     layer_top    = 0.1;
@@ -59,19 +59,27 @@ cols.transition()
   .attr('y', function(d) {return col_top() + ((actual_max() - d.y) * col_height()); });
 
 // Add circles 
-var circles = cols_gcheck.selectAll('circle').data(data);
-
-cols.enter().append('circle')
-  //.attr('height', function(d) {return (d.y * col_height()); })
-  //.attr('width', col_width())
-  .attr("cx", function(d, i) {return ((i + 0.5) * col_width()) + (svg_width() * layer_left); })
-  .attr("cy", function(d) {return col_top() + ((actual_max() - d.yorig) * col_height()); })
-  .attr("r", 8.0)
-  .attr('opacity', 0.5)
-  .style("fill", "none")
-  .style("stroke-width", 3)
-  .style("stroke-dasharray", ("7, 3")) // make the stroke dashed
-  .attr('stroke', 'grey');
+// Check for option passed in
+if (options === null || options.show_initial === null) {
+  var show_initial = false;
+} else {
+  var show_initial = options.show_initial;
+}
+if (show_initial) {
+  var circles = cols_gcheck.selectAll('circle').data(data);
+  
+  cols.enter().append('circle')
+    //.attr('height', function(d) {return (d.y * col_height()); })
+    //.attr('width', col_width())
+    .attr("cx", function(d, i) {return ((i + 0.5) * col_width()) + (svg_width() * layer_left); })
+    .attr("cy", function(d) {return col_top() + ((actual_max() - d.yorig) * col_height()); })
+    .attr("r", 8.0)
+    .attr('opacity', 0.5)
+    .style("fill", "none")
+    .style("stroke-width", 3)
+    .style("stroke-dasharray", ("7, 3")) // make the stroke dashed
+    .attr('stroke', 'grey');
+}
 
 // Identity labels
 var labels_gcheck = svg.selectAll("g.labels").data(data);

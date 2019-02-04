@@ -1,4 +1,4 @@
-// !preview r2d3 data=createFunnelData()
+// !preview r2d3 data=createFunnelData(), options = list(fl_max = 140)
 //
 // r2d3: https://rstudio.github.io/r2d3
 //
@@ -17,7 +17,14 @@ var sampledata = d3.nest()
     return d.sim;
   })
   .entries(data.flSample);
-  
+
+// Check for option passed in
+if (options === null || options.fl_max === null) {
+  var fl_max = 130;
+} else {
+  var fl_max = options.fl_max;
+}
+ 
 
 var layer_left   = 0.1;
     layer_top    = 0.1;
@@ -104,7 +111,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
 
   //setup y axis
   var y = d3.scaleLinear()
-          .domain([0,130]).nice()
+          .domain([0, fl_max]).nice()
           .range([panel_height(), 0]);
   var y_axis = d3.axisLeft()
   			        .scale(y);
@@ -180,7 +187,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
         .attr("y", function (d) { return y(d.qtileValue); })
         .text(function(d) {return parseFloat(d.qtileValue).toFixed(0)+"%"; })
         .attr('text-anchor', 'middle')
-        .attr("dy", "-.5em")
+        .attr("dy", "-.3em")
         .style('font-size', '12px') 
         .attr("fill", "#3FA6CCFF")
         .style('font-family', 'sans-serif')
@@ -191,6 +198,7 @@ r2d3.onRender(function(data, svg, width, height, options) {
         })
         .on("mouseleave", function(){
             d3.select(this)
+              .transition().delay(1000)
               .style('opacity', "0");
         });
         
