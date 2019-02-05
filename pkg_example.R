@@ -8,6 +8,7 @@ library(r2d3)
 set.seed(1.357)
 nproj <- 15
 nsim <- 5000
+liabValue <- 200
 sampleSims <- sample.int(nsim, floor(0.1 * nsim))
 highRiskRtns <- 
   simplyr::createRandomReturns(
@@ -23,9 +24,6 @@ ui <-
     title = "D3 test",
     sidebarLayout(
       sidebarPanel(
-        numericInput(
-          inputId = "liabValue", label = "Liab. value (m)", value = 200, 
-          min = 0, max = 10000),
         sliderInput(
           inputId = "fl", label = "initial f.l.", min = 50, max = 100, 
           value = 70, step = 1), 
@@ -63,11 +61,11 @@ server <- function(input, output) {
       (1 - input$ppnRisky / 100) * lbpRtns
   })
   assetValues <- reactive({
-    input$fl * input$liabValue * simplyr::convertReturnToIndex(assetRtns())
+    input$fl * liabValue * simplyr::convertReturnToIndex(assetRtns())
   })
   
   liabValues <- reactive({
-    input$liabValue * simplyr::convertReturnToIndex(lbpRtns)
+    liabValue * simplyr::convertReturnToIndex(lbpRtns)
   })
   
   flProjections <- reactive({
