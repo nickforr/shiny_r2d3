@@ -98,7 +98,8 @@ server <- function(input, output) {
       )
     r2d3(
       barData,
-      script = "prob_col_comparison.js"
+      script = "prob_col_comparison.js", 
+      options = list(show_initial = FALSE)
     )
   })
 }

@@ -72,7 +72,7 @@ if (show_initial) {
     .attr("cx", function(d, i) {return ((i + 0.5) * col_width()) + (svg_width() * layer_left); })
     .attr("cy", function(d) {return col_top() + ((actual_max() - d.yorig) * col_height()); })
     .attr("r", 8.0)
-    .attr('opacity', 0.5)
+    .attr('opacity', 0.3)
     .style("fill", "none")
     .style("stroke-width", 3)
     .style("stroke-dasharray", ("7, 3")) // make the stroke dashed
@@ -118,7 +118,7 @@ totals.enter().append('text')
       .attr('x', function(d, i) {return (i * col_width()) + (svg_width()* layer_left) + (col_width() * 0.5); })
       .attr('y', function(d) {return (col_top() * 0.9) + ((actual_max() - d.y) * col_height()); })
       .attr('text-anchor', 'middle')
-      .style('font-size', '12px') 
+      .style('font-size', '11px') 
       .style('font-family', 'sans-serif')
       .text(function(d) {return d.ylabel; });  
 
@@ -127,7 +127,7 @@ totals.exit().remove();
 totals.transition()
   .duration(500)
       .attr('x', function(d, i) {return (i * col_width()) + (svg_width()* layer_left) + (col_width() * 0.5); })
-      .attr('y', function(d) {return col_top() + ((actual_max() - d.y) * col_height()); })
+      .attr('y', function(d) {return col_top() * 0.9 + ((actual_max() - d.y) * col_height()); })
       .text(function(d) {return d.ylabel; });
 
 // y axis...
